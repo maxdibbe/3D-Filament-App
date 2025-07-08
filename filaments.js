@@ -51,6 +51,51 @@ function exportPDF(id) {
     alert("Impossibile esportare: elemento non trovato.");
   }
 }
+function loadFilamentTable() {
+  db.collection("filaments").onSnapshot(snapshot => {
+    const tbody = document.getElementById("filament-table-body");
+    tbody.innerHTML = "";
+    snapshot.forEach(doc => {
+      const f = doc.data();
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${f.name}</td>
+        <td>${f.material}</td>
+        <td>${f.color}</td>
+        <td>${f.flowRate || ''}</td>
+        <td>${f.td || ''}</td>
+        <td>${f.price || ''}</td>
+        <td>
+          <button onclick="editFilament('${doc.id}', ${JSON.stringify(f)})">✏️</button>
+          <button onclick="deleteFilament('${doc.id}')">🗑️</button>
+          <button onclick="exportPDF('${doc.id}')">📄</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+}
+document.getElementById('filter-name').addEventListener('input', filterTable);
+document.getElementById('filter-material').addEventListener('input', filterTable);
+document.getElementById('filter-color').addEventListener('input', filterTable);
+
+function filterTable() {
+  const name = document.getElementById('filter-name').value.toLowerCase();
+  const material = document.getElementById('filter-material').value.toLowerCase();
+  const color = document.getElementById('filter-color').value.toLowerCase();
+
+  const rows = document.querySelectorAll('#filament-table-body tr');
+  rows.forEach(row => {
+    const cells = row.getElementsByTagName('td');
+    const match = (
+      cells[0].textContent.toLowerCase().includes(name) &&
+      cells[1].textContent.toLowerCase().includes(material) &&
+      cells[2].textContent.toLowerCase().includes(color)
+    );
+    row.style.display = match ? '' : 'none';
+  });
+}
+
 
 function editFilament(id, data) {
   document.getElementById('name').value = data.name;
