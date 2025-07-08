@@ -9,7 +9,8 @@
   <h1>Gestione Filamenti</h1>
   <button onclick="logout()">Logout</button>
   <form id="filament-form">
-    <input type="text" id="name" placeholder="Nome" required><br>
+    <input type="text" id="name" placeholder="Nome" required><br><!-- Dentro ciascun elemento lista -->
+        <button onclick="editFilament('${doc.id}', ${JSON.stringify(data)})">Modifica</button>
     <input type="text" id="material" placeholder="Materiale" required><br>
     <input type="number" id="temperature" placeholder="Temperatura" required><br>
     <input type="number" id="flowRate" placeholder="Flow Rate" required><br>
