@@ -9,8 +9,7 @@
   <h1>Gestione Filamenti</h1>
   <button onclick="logout()">Logout</button>
   <form id="filament-form">
-    <input type="text" id="name" placeholder="Nome" required><br><!-- Dentro ciascun elemento lista -->
-        <button onclick="editFilament('${doc.id}', ${JSON.stringify(data)})">Modifica</button>
+    <input type="text" id="name" placeholder="Nome" required><br>
     <input type="text" id="material" placeholder="Materiale" required><br>
     <input type="number" id="temperature" placeholder="Temperatura" required><br>
     <input type="number" id="flowRate" placeholder="Flow Rate" required><br>
@@ -18,7 +17,10 @@
     <input type="number" id="price" placeholder="Prezzo" required><br>
     <button type="submit">Salva</button>
   </form>
-
+<!-- Dentro ciascun elemento lista -->
+        <button onclick="editFilament('${doc.id}', ${JSON.stringify(data)})">Modifica</button>
+  <!-- Dentro ciascun elemento lista -->
+        <button onclick="editFilament('${doc.id}', ${JSON.stringify(data)})">Cancella</button>
   <ul id="filament-list"></ul>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
