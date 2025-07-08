@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filamenti</title>
+</head>
+<body>
+  <h1>Gestione Filamenti</h1>
+  <button onclick="logout()">Logout</button>
+  <form id="filament-form">
+    <input type="text" id="name" placeholder="Nome" required><br>
+    <input type="text" id="material" placeholder="Materiale" required><br>
+    <input type="number" id="temperature" placeholder="Temperatura" required><br>
+    <input type="number" id="flowRate" placeholder="Flow Rate" required><br>
+    <input type="text" id="td" placeholder="TD" required><br>
+    <input type="number" id="price" placeholder="Prezzo" required><br>
+    <button type="submit">Salva</button>
+  </form>
+
+  <ul id="filament-list"></ul>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script src="filaments.js"></script>
+</body>
+</html>
