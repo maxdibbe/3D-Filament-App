@@ -1,64 +1,21 @@
-firebase.initializeApp(firebaseConfig);
+// Firebase config
+firebase.initializeApp({...});
 const db = firebase.firestore();
-const auth = firebase.auth();
-const form = document.getElementById('filament-form');
-const list = document.getElementById('filament-list');
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const name = document.getElementById('name').value;
-  const material = document.getElementById('material').value;
-  const temperature = document.getElementById('temperature').value;
-  const flowRate = document.getElementById('flowRate').value;
-  const td = document.getElementById('td').value;
-  const price = document.getElementById('price').value;
+// 🔁 Caricamento iniziale
+window.onload = () => {
+  loadFilamentTable();
+};
 
-  await db.collection('filaments').add({ name, material, temperature, flowRate, td, price });
-  form.reset();
-  loadFilaments();
-});
-
-async function loadFilaments() {
-  list.innerHTML = '';
-  const snapshot = await db.collection('filaments').get();
-  snapshot.forEach(doc => {
-    const data = doc.data();
-   // Dentro il ciclo di creazione degli elementi DOM
-let container = document.createElement('div');
-container.id = `filament-${doc.id}`;
-container.innerHTML = `
-  <h3>${data.name}</h3>
-  <p>Materiale: ${data.material}</p>
-  <p>Colore: ${data.color}</p>
-  <!-- Altri dati -->
-  <button onclick="exportPDF('${doc.id}')">📄 Esporta in PDF</button>
-`;
-listContainer.appendChild(container);
-
-  });
-}
-function exportPDF(id) {
-  const element = document.getElementById(`filament-${id}`);
-  if (element) {
-    html2pdf().set({
-      margin: 10,
-      filename: `filament-${id}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    }).from(element).save();
-  } else {
-    alert("Impossibile esportare: elemento non trovato.");
-  }
-}
+// 🧾 Carica e mostra i filamenti in tabella
 function loadFilamentTable() {
   db.collection("filaments").onSnapshot(snapshot => {
     const tbody = document.getElementById("filament-table-body");
     tbody.innerHTML = "";
     snapshot.forEach(doc => {
       const f = doc.data();
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
+      const row = document.createElement("tr");
+      row.innerHTML = `
         <td>${f.name}</td>
         <td>${f.material}</td>
         <td>${f.color}</td>
@@ -66,65 +23,84 @@ function loadFilamentTable() {
         <td>${f.td || ''}</td>
         <td>${f.price || ''}</td>
         <td>
-          <button onclick="editFilament('${doc.id}', ${JSON.stringify(f)})">✏️</button>
-          <button onclick="deleteFilament('${doc.id}')">🗑️</button>
-          <button onclick="exportPDF('${doc.id}')">📄</button>
+          <button onclick='editFilament("${doc.id}", ${JSON.stringify(f)})'>✏️</button>
+          <button onclick='deleteFilament("${doc.id}")'>🗑️</button>
+          <button onclick='exportPDF("${doc.id}")'>📄</button>
         </td>
       `;
-      tbody.appendChild(tr);
+      row.id = `filament-${doc.id}`;
+      tbody.appendChild(row);
     });
   });
 }
-document.getElementById('filter-name').addEventListener('input', filterTable);
-document.getElementById('filter-material').addEventListener('input', filterTable);
-document.getElementById('filter-color').addEventListener('input', filterTable);
+
+// 🔍 Filtri live
+['filter-name', 'filter-material', 'filter-color'].forEach(id =>
+  document.getElementById(id).addEventListener('input', filterTable)
+);
 
 function filterTable() {
   const name = document.getElementById('filter-name').value.toLowerCase();
   const material = document.getElementById('filter-material').value.toLowerCase();
   const color = document.getElementById('filter-color').value.toLowerCase();
 
-  const rows = document.querySelectorAll('#filament-table-body tr');
-  rows.forEach(row => {
-    const cells = row.getElementsByTagName('td');
-    const match = (
-      cells[0].textContent.toLowerCase().includes(name) &&
-      cells[1].textContent.toLowerCase().includes(material) &&
-      cells[2].textContent.toLowerCase().includes(color)
-    );
-    row.style.display = match ? '' : 'none';
+  document.querySelectorAll('#filament-table-body tr').forEach(row => {
+    const [n, m, c] = [...row.children].map(td => td.textContent.toLowerCase());
+    row.style.display = (n.includes(name) && m.includes(material) && c.includes(color)) ? '' : 'none';
   });
 }
 
-
+// ✏️ Modifica
 function editFilament(id, data) {
+  document.getElementById('form-title').textContent = '✏️ Modifica Filamento';
   document.getElementById('name').value = data.name;
-  // … riempi gli altri campi
-  form.onsubmit = async e => {
+  document.getElementById('material').value = data.material;
+  document.getElementById('color').value = data.color;
+  document.getElementById('flowRate').value = data.flowRate || '';
+  document.getElementById('td').value = data.td || '';
+  document.getElementById('price').value = data.price || '';
+  document.getElementById('filament-form').onsubmit = async e => {
     e.preventDefault();
-    await db.collection('filaments').doc(id).update({
-      name: ..., material: ..., // etc.
-    });
-    form.reset();
-    form.onsubmit = addNew;
-    loadFilaments();
+    await db.collection("filaments").doc(id).update(getFormData());
+    resetForm();
   };
 }
+
+// ➕ Inserimento
+document.getElementById('filament-form').onsubmit = async e => {
+  e.preventDefault();
+  await db.collection("filaments").add(getFormData());
+  resetForm();
+};
+
+function getFormData() {
+  return {
+    name: document.getElementById('name').value,
+    material: document.getElementById('material').value,
+    color: document.getElementById('color').value,
+    flowRate: document.getElementById('flowRate').value,
+    td: document.getElementById('td').value,
+    price: document.getElementById('price').value
+  };
+}
+
+function resetForm() {
+  document.getElementById('filament-form').reset();
+  document.getElementById('form-title').textContent = '➕ Aggiungi Nuovo Filamento';
+  document.getElementById('filament-form').onsubmit = async e => {
+    e.preventDefault();
+    await db.collection("filaments").add(getFormData());
+    resetForm();
+  };
+}
+
+// 🗑️ Cancella
 function deleteFilament(id) {
-  db.collection('filaments').doc(id).delete().then(loadFilaments);
+  db.collection("filaments").doc(id).delete();
 }
 
-
-
-async function deleteFilament(id) {
-  await db.collection('filaments').doc(id).delete();
-  loadFilaments();
+// 📄 PDF
+function exportPDF(id) {
+  const el = document.getElementById(`filament-${id}`);
+  html2pdf().from(el).save(`filament-${id}.pdf`);
 }
-
-auth.onAuthStateChanged(user => {
-  if (user) {
-    loadFilaments();
-  } else {
-    window.location.href = "index.html";
-  }
-});
