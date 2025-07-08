@@ -23,13 +23,33 @@ async function loadFilaments() {
   const snapshot = await db.collection('filaments').get();
   snapshot.forEach(doc => {
     const data = doc.data();
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <strong>${data.name}</strong> - ${data.material}, ${data.temperature}°C, Flow: ${data.flowRate}, TD: ${data.td}, €${data.price}
-      <button onclick="deleteFilament('${doc.id}')">Cancella</button>
-    `;
-    list.appendChild(li);
+   // Dentro il ciclo di creazione degli elementi DOM
+let container = document.createElement('div');
+container.id = `filament-${doc.id}`;
+container.innerHTML = `
+  <h3>${data.name}</h3>
+  <p>Materiale: ${data.material}</p>
+  <p>Colore: ${data.color}</p>
+  <!-- Altri dati -->
+  <button onclick="exportPDF('${doc.id}')">📄 Esporta in PDF</button>
+`;
+listContainer.appendChild(container);
+
   });
+}
+function exportPDF(id) {
+  const element = document.getElementById(`filament-${id}`);
+  if (element) {
+    html2pdf().set({
+      margin: 10,
+      filename: `filament-${id}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(element).save();
+  } else {
+    alert("Impossibile esportare: elemento non trovato.");
+  }
 }
 
 function editFilament(id, data) {

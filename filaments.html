@@ -24,8 +24,10 @@
 <!-- Dentro ciascun elemento lista -->
 <button onclick="deleteFilament('${doc.id}', ${JSON.stringify(data)})">Cancella</button>
 
- <button onclick="exportPDF('${doc.id}')">Esporta PDF</button>
-  
+<button onclick="exportPDF('${doc.id}')">Esporta PDF</button>
+
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 
 
@@ -36,5 +38,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <script src="filaments.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
 </body>
 </html>
