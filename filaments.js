@@ -32,10 +32,6 @@ async function loadFilaments() {
   });
 }
 
-async function deleteFilament(id) {
-  await db.collection('filaments').doc(id).delete();
-  loadFilaments();
-}
 function editFilament(id, data) {
   document.getElementById('name').value = data.name;
   // … riempi gli altri campi
@@ -54,6 +50,11 @@ function deleteFilament(id) {
 }
 
 
+
+async function deleteFilament(id) {
+  await db.collection('filaments').doc(id).delete();
+  loadFilaments();
+}
 
 auth.onAuthStateChanged(user => {
   if (user) {
