@@ -36,6 +36,24 @@ async function deleteFilament(id) {
   await db.collection('filaments').doc(id).delete();
   loadFilaments();
 }
+function editFilament(id, data) {
+  document.getElementById('name').value = data.name;
+  // … riempi gli altri campi
+  form.onsubmit = async e => {
+    e.preventDefault();
+    await db.collection('filaments').doc(id).update({
+      name: ..., material: ..., // etc.
+    });
+    form.reset();
+    form.onsubmit = addNew;
+    loadFilaments();
+  };
+}
+function deleteFilament(id) {
+  db.collection('filaments').doc(id).delete().then(loadFilaments);
+}
+
+
 
 auth.onAuthStateChanged(user => {
   if (user) {
