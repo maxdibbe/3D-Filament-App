@@ -1,7 +1,4 @@
 // Firebase config (sostituisci con i tuoi valori)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyCnXR4StZ2ri3AdB3gNgfWxNaN9nYyBIOQ",
   authDomain: "dfilamentapp.firebaseapp.com",
@@ -13,7 +10,6 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const db = getFirestore(app);
 
 function login() {
   const email = document.getElementById("email").value;
