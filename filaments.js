@@ -1,15 +1,6 @@
-
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-const auth = getAuth(app);
-
-onAuthStateChanged(auth, user => {
-  if (user) {
-    loadFilamentTable(); // Carica i dati
-  } else {
-    window.location.href = "login.html";
-  }
-});
+// Firebase config
+firebase.initializeApp({...});
+const db = firebase.firestore();
 
 // 🔁 Caricamento iniziale
 window.onload = () => {
@@ -39,15 +30,6 @@ function loadFilamentTable() {
       `;
       row.id = `filament-${doc.id}`;
       tbody.appendChild(row);
-	  
-	  console.log("🔄 Provo a caricare i filamenti...");
-onSnapshot(filamentsCol, (snapshot) => {
-  console.log("📥 Snapshot ricevuto:", snapshot.size);
-  snapshot.forEach(doc => {
-    console.log("📄 Documento:", doc.id, doc.data());
-  });
-});
-
     });
   });
 }
@@ -122,3 +104,4 @@ function exportPDF(id) {
   const el = document.getElementById(`filament-${id}`);
   html2pdf().from(el).save(`filament-${id}.pdf`);
 }
+
