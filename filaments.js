@@ -1,11 +1,31 @@
 // Firebase config
-firebase.initializeApp({...});
+/*firebase.initializeApp({...});
 const db = firebase.firestore();
 
 // 🔁 Caricamento iniziale
 window.onload = () => {
   loadFilamentTable();
-};
+};*/
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+const form = document.getElementById('filament-form');
+const list = document.getElementById('filament-list');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('name').value;
+  const material = document.getElementById('material').value;
+  const temperature = document.getElementById('temperature').value;
+  const flowRate = document.getElementById('flowRate').value;
+  const td = document.getElementById('td').value;
+  const price = document.getElementById('price').value;
+
+  await db.collection('filaments').add({ name, material, temperature, flowRate, td, price });
+  form.reset();
+  loadFilaments();
+});
 
 // 🧾 Carica e mostra i filamenti in tabella
 function loadFilamentTable() {
