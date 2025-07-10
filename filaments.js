@@ -1,5 +1,5 @@
 // Firebase config
-/*firebase.initializeApp({...});
+/*firebase.initializeApp({firebaseConfig});
 const db = firebase.firestore();
 
 // 🔁 Caricamento iniziale
